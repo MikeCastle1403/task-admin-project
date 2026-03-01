@@ -6,16 +6,24 @@ let searchQuery = '';
 // DOM Elements
 const taskForm = document.getElementById('task-form');
 const titleInput = document.getElementById('task-title');
+const priorityInput = document.getElementById('task-priority');
 const descInput = document.getElementById('task-desc');
 const taskList = document.getElementById('task-list');
 const emptyState = document.getElementById('empty-state');
 const searchInput = document.getElementById('search-input');
 const filterBtns = document.querySelectorAll('.filter-btn');
 
+// Form Toggle Elements
+const addTaskWrapper = document.getElementById('add-task-wrapper');
+const toggleFormBtn = document.getElementById('toggle-form-btn');
+const closeFormBtn = document.getElementById('close-form-btn');
+const taskFormSection = document.getElementById('task-form-section');
+
 // Modal Elements
 const editModal = document.getElementById('edit-modal');
 const editForm = document.getElementById('edit-form');
 const editTitleInput = document.getElementById('edit-task-title');
+const editPriorityInput = document.getElementById('edit-task-priority');
 const editDescInput = document.getElementById('edit-task-desc');
 const editTaskIdInput = document.getElementById('edit-task-id');
 const closeModalBtn = document.getElementById('close-modal');
@@ -47,10 +55,22 @@ function init() {
 
 // Event Listeners
 function setupEventListeners() {
+    // Toggle Form
+    toggleFormBtn.addEventListener('click', () => {
+        taskFormSection.classList.remove('hidden');
+        addTaskWrapper.classList.add('hidden');
+        titleInput.focus();
+    });
+
+    closeFormBtn.addEventListener('click', () => {
+        taskFormSection.classList.add('hidden');
+        addTaskWrapper.classList.remove('hidden');
+    });
+
     // Add task
     taskForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        addTask(titleInput.value.trim(), descInput.value.trim());
+        addTask(titleInput.value.trim(), priorityInput.value, descInput.value.trim());
     });
 
     // Search
@@ -98,12 +118,13 @@ function setupEventListeners() {
 }
 
 // Task Actions
-function addTask(title, description) {
+function addTask(title, priority, description) {
     if (!title) return;
 
     const newTask = {
         id: Date.now().toString(),
         title,
+        priority,
         description,
         status: 'in-progress',
         createdAt: new Date().toISOString()
@@ -112,10 +133,12 @@ function addTask(title, description) {
     tasks.unshift(newTask);
     saveState();
 
-    // Reset form
+    // Reset form and hide it
     titleInput.value = '';
+    priorityInput.value = 'baja';
     descInput.value = '';
-    titleInput.focus();
+    taskFormSection.classList.add('hidden');
+    addTaskWrapper.classList.remove('hidden');
 
     showToast('Task added successfully', 'success');
     renderTasks();
@@ -148,6 +171,7 @@ function openEditModal(id) {
 
     editTaskIdInput.value = task.id;
     editTitleInput.value = task.title;
+    editPriorityInput.value = task.priority || 'baja';
     editDescInput.value = task.description || '';
 
     editModal.classList.remove('hidden');
@@ -164,6 +188,7 @@ function closeEditModal() {
 function saveEditedTask() {
     const id = editTaskIdInput.value;
     const newTitle = editTitleInput.value.trim();
+    const newPriority = editPriorityInput.value;
     const newDesc = editDescInput.value.trim();
 
     if (!newTitle) return;
@@ -171,6 +196,7 @@ function saveEditedTask() {
     const taskIndex = tasks.findIndex(t => t.id === id);
     if (taskIndex !== -1) {
         tasks[taskIndex].title = newTitle;
+        tasks[taskIndex].priority = newPriority;
         tasks[taskIndex].description = newDesc;
         saveState();
         renderTasks();
@@ -244,11 +270,27 @@ function renderTasks() {
         header.className = 'task-header';
 
         const titleArea = document.createElement('div');
+        titleArea.style.flex = '1';
+
+        const titleHeaderLine = document.createElement('div');
+        titleHeaderLine.style.display = 'flex';
+        titleHeaderLine.style.justifyContent = 'space-between';
+        titleHeaderLine.style.alignItems = 'flex-start';
 
         const title = document.createElement('h3');
         title.className = 'task-title';
         title.textContent = task.title;
-        titleArea.appendChild(title);
+        titleHeaderLine.appendChild(title);
+
+        // Add priority badge
+        if (task.priority) {
+            const priorityBadge = document.createElement('span');
+            priorityBadge.className = `priority-badge priority-${task.priority}`;
+            priorityBadge.textContent = task.priority === 'alta' ? 'Alta prioridad' : 'Baja prioridad';
+            titleHeaderLine.appendChild(priorityBadge);
+        }
+
+        titleArea.appendChild(titleHeaderLine);
 
         if (task.description) {
             const desc = document.createElement('p');
