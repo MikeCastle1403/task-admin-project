@@ -728,6 +728,76 @@ select.form-select:focus {
     z-index: 1000;
 }
 
+/* ============================================================
+   SOCIAL AUTH STYLES
+   ============================================================ */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+    color: var(--clr-text-muted);
+    font-size: 0.85rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.auth-divider span {
+    padding: 0 1rem;
+}
+
+.social-auth {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+.social-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 0.75rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    backdrop-filter: blur(10px);
+}
+
+.social-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.social-btn.github {
+    background: #24292e;
+    color: white;
+}
+
+.social-btn.github:hover {
+    background: #2f363d;
+}
+
+.social-btn.google {
+    background: white;
+    color: #444;
+}
+
+.social-btn.google:hover {
+    background: #f8f8f8;
+}
+
 .toast {
     background: white;
     color: var(--clr-text-main);

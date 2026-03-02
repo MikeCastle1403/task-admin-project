@@ -57,6 +57,8 @@ const signupEmailInput = document.getElementById('signup-email');
 const signupPasswordInput = document.getElementById('signup-password');
 const signupError = document.getElementById('signup-error');
 const signupSubmitBtn = document.getElementById('signup-submit-btn');
+const githubLoginBtn = document.getElementById('github-login');
+const googleLoginBtn = document.getElementById('google-login');
 const authTabs = document.querySelectorAll('.auth-tab');
 
 // ============================================================
@@ -191,6 +193,19 @@ async function handleLogout() {
         currentUser = null;
         tasks = [];
         showAuthModal();
+    }
+}
+
+async function handleSocialLogin(provider) {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+            redirectTo: window.location.origin
+        }
+    });
+
+    if (error) {
+        showToast(`Error al iniciar con ${provider}: ${error.message}`, 'error');
     }
 }
 
@@ -350,6 +365,9 @@ function setupEventListeners() {
     loginForm.addEventListener('submit', handleLogin);
     signupForm.addEventListener('submit', handleSignup);
     logoutBtn.addEventListener('click', handleLogout);
+
+    githubLoginBtn.addEventListener('click', () => handleSocialLogin('github'));
+    googleLoginBtn.addEventListener('click', () => handleSocialLogin('google'));
 
     // Note: tabs are wired up in a separate DOMContentLoaded above
 
