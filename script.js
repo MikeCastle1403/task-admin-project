@@ -84,6 +84,11 @@ const Icons = {
 // INIT
 // ============================================================
 async function init() {
+    // 1. Cleanup malformed hashes from OAuth (e.g., ## to #)
+    if (window.location.hash.startsWith('##')) {
+        window.history.replaceState(null, null, window.location.pathname + window.location.hash.substring(1));
+    }
+
     setupEventListeners();
 
     // Listen to auth state changes (login, logout, page load)
@@ -187,6 +192,8 @@ async function handleSignup(e) {
 async function handleLogout() {
     try {
         await supabaseClient.auth.signOut();
+        // Clear auth fragments from URL
+        window.history.replaceState(null, null, window.location.pathname);
     } catch (err) {
         console.error("Logout error:", err);
     } finally {
@@ -200,7 +207,7 @@ async function handleSocialLogin(provider) {
     const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: provider,
         options: {
-            redirectTo: window.location.href
+            redirectTo: window.location.origin
         }
     });
 
