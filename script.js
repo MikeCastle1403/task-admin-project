@@ -102,6 +102,7 @@ async function init() {
 // AUTH UI HELPERS
 // ============================================================
 function showApp() {
+    if (!currentUser) return;
     authModal.style.display = 'none';
     appContainer.style.display = 'flex';
 
@@ -182,8 +183,15 @@ async function handleSignup(e) {
 }
 
 async function handleLogout() {
-    await supabaseClient.auth.signOut();
-    showAuthModal(); // Ensure UI reset immediately
+    try {
+        await supabaseClient.auth.signOut();
+    } catch (err) {
+        console.error("Logout error:", err);
+    } finally {
+        currentUser = null;
+        tasks = [];
+        showAuthModal();
+    }
 }
 
 // ============================================================
@@ -206,6 +214,11 @@ async function fetchTasks() {
 
 async function addTask(title, priority, description) {
     if (!title) return;
+    if (!currentUser) {
+        showToast('Debes iniciar sesión para añadir tareas', 'error');
+        showAuthModal();
+        return;
+    }
 
     const newTask = {
         title,
