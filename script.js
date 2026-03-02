@@ -31,7 +31,7 @@ const toggleFormBtn = document.getElementById('toggle-form-btn');
 const closeFormBtn = document.getElementById('close-form-btn');
 const taskFormSection = document.getElementById('task-form-section');
 const toastContainer = document.getElementById('toast-container');
-const userEmailEl = document.getElementById('user-email');
+const userGreetingEl = document.getElementById('user-greeting');
 const logoutBtn = document.getElementById('logout-btn');
 
 // DOM — EDIT MODAL
@@ -104,7 +104,11 @@ async function init() {
 function showApp() {
     authModal.style.display = 'none';
     appContainer.style.display = 'flex';
-    userEmailEl.textContent = currentUser.email;
+
+    // Get username from metadata, fallback to email prefix if not found
+    const username = currentUser.user_metadata?.username || currentUser.email.split('@')[0];
+    userGreetingEl.textContent = `¡Hola, ${username}!`;
+
     renderTasks();
 }
 
