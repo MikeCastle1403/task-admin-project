@@ -200,7 +200,7 @@ async function handleSocialLogin(provider) {
     const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: provider,
         options: {
-            redirectTo: window.location.origin
+            redirectTo: window.location.href
         }
     });
 
