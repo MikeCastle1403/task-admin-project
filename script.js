@@ -1,10 +1,10 @@
 // ============================================================
-// SUPABASE CONFIG
+// supabaseClient CONFIG
 // ============================================================
 const SUPABASE_URL = 'https://lwhsiieupsqypswrusmh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3aHNpaWV1cHNxeXBzd3J1c21oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwMzk0NTksImV4cCI6MjA4NzYxNTQ1OX0.wj93qGU1uFDMSuzTKrNOmd8FTkaLlOBlWqhayalnkRA';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ============================================================
 // STATE
@@ -52,11 +52,23 @@ const loginEmailInput = document.getElementById('login-email');
 const loginPasswordInput = document.getElementById('login-password');
 const loginError = document.getElementById('login-error');
 const loginSubmitBtn = document.getElementById('login-submit-btn');
+const signupUsernameInput = document.getElementById('signup-username');
 const signupEmailInput = document.getElementById('signup-email');
 const signupPasswordInput = document.getElementById('signup-password');
 const signupError = document.getElementById('signup-error');
 const signupSubmitBtn = document.getElementById('signup-submit-btn');
 const authTabs = document.querySelectorAll('.auth-tab');
+
+// ============================================================
+// AUTH TABS — global function, called directly from onclick
+// attributes in HTML so switching always works instantly.
+// ============================================================
+function switchAuthTab(tab) {
+    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+    document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+    loginForm.style.display = tab === 'login' ? 'flex' : 'none';
+    signupForm.style.display = tab === 'signup' ? 'flex' : 'none';
+}
 
 // ============================================================
 // SVG Icons
@@ -73,7 +85,7 @@ async function init() {
     setupEventListeners();
 
     // Listen to auth state changes (login, logout, page load)
-    supabase.auth.onAuthStateChange(async (event, session) => {
+    supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session && session.user) {
             currentUser = session.user;
             showApp();
@@ -90,14 +102,14 @@ async function init() {
 // AUTH UI HELPERS
 // ============================================================
 function showApp() {
-    authModal.classList.add('hidden');
+    authModal.style.display = 'none';
     appContainer.style.display = 'flex';
     userEmailEl.textContent = currentUser.email;
     renderTasks();
 }
 
 function showAuthModal() {
-    authModal.classList.remove('hidden');
+    authModal.style.display = 'flex';
     appContainer.style.display = 'none';
     taskList.innerHTML = '';
 }
@@ -109,53 +121,71 @@ async function handleLogin(e) {
     e.preventDefault();
     const email = loginEmailInput.value.trim();
     const password = loginPasswordInput.value;
-    loginError.classList.add('hidden');
+    loginError.style.display = 'none';
     loginSubmitBtn.classList.add('btn-loading');
-    loginSubmitBtn.textContent = 'Signing in…';
+    loginSubmitBtn.textContent = 'Logging in…';
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
     loginSubmitBtn.classList.remove('btn-loading');
-    loginSubmitBtn.textContent = 'Sign In';
+    loginSubmitBtn.textContent = 'Log In';
 
     if (error) {
         loginError.textContent = error.message;
-        loginError.classList.remove('hidden');
+        loginError.style.display = 'block';
     }
 }
 
 async function handleSignup(e) {
     e.preventDefault();
+    const username = signupUsernameInput.value.trim();
     const email = signupEmailInput.value.trim();
     const password = signupPasswordInput.value;
-    signupError.classList.add('hidden');
+
+    if (!username) {
+        signupError.textContent = 'Please enter a username.';
+        signupError.style.background = '';
+        signupError.style.color = '';
+        signupError.style.display = 'block';
+        return;
+    }
+
+    signupError.style.display = 'none';
     signupSubmitBtn.classList.add('btn-loading');
     signupSubmitBtn.textContent = 'Creating account…';
 
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { data: { username } }   // store username in user_metadata
+    });
 
     signupSubmitBtn.classList.remove('btn-loading');
     signupSubmitBtn.textContent = 'Create Account';
 
     if (error) {
         signupError.textContent = error.message;
-        signupError.classList.remove('hidden');
+        signupError.className = 'auth-error';
+        signupError.style.display = 'block';
     } else {
-        signupError.style.color = 'var(--clr-success)';
-        signupError.textContent = 'Account created! Check your email to confirm, then sign in.';
-        signupError.classList.remove('hidden');
+        signupError.textContent = '✓ Account created! Check your email to confirm, then log in.';
+        signupError.className = 'auth-error success-msg';
+        signupError.style.display = 'block';
+        signupUsernameInput.value = '';
+        signupEmailInput.value = '';
+        signupPasswordInput.value = '';
     }
 }
 
 async function handleLogout() {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
 }
 
 // ============================================================
 // DATABASE — TASKS
 // ============================================================
 async function fetchTasks() {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
         .from('tasks')
         .select('*')
         .eq('user_id', currentUser.id)
@@ -180,7 +210,7 @@ async function addTask(title, priority, description) {
         user_id: currentUser.id
     };
 
-    const { data, error } = await supabase.from('tasks').insert([newTask]).select().single();
+    const { data, error } = await supabaseClient.from('tasks').insert([newTask]).select().single();
 
     if (error) {
         showToast('Error adding task: ' + error.message, 'error');
@@ -207,7 +237,7 @@ async function toggleTaskStatus(id) {
     const currentStatus = tasks[taskIndex].status;
     const newStatus = currentStatus === 'completed' ? 'in-progress' : 'completed';
 
-    const { error } = await supabase
+    const { error } = await supabaseClient
         .from('tasks')
         .update({ status: newStatus })
         .eq('id', id)
@@ -226,7 +256,7 @@ async function toggleTaskStatus(id) {
 }
 
 async function deleteTask(id) {
-    const { error } = await supabase
+    const { error } = await supabaseClient
         .from('tasks')
         .delete()
         .eq('id', id)
@@ -271,7 +301,7 @@ async function saveEditedTask() {
 
     if (!newTitle) return;
 
-    const { error } = await supabase
+    const { error } = await supabaseClient
         .from('tasks')
         .update({ title: newTitle, priority: newPriority, description: newDesc })
         .eq('id', id)
@@ -298,25 +328,12 @@ async function saveEditedTask() {
 // EVENT LISTENERS
 // ============================================================
 function setupEventListeners() {
-    // AUTH — Tab switching
-    authTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            authTabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-
-            if (tab.dataset.tab === 'login') {
-                loginForm.classList.remove('hidden');
-                signupForm.classList.add('hidden');
-            } else {
-                loginForm.classList.add('hidden');
-                signupForm.classList.remove('hidden');
-            }
-        });
-    });
-
+    // AUTH — form submit handlers and logout
     loginForm.addEventListener('submit', handleLogin);
     signupForm.addEventListener('submit', handleSignup);
     logoutBtn.addEventListener('click', handleLogout);
+
+    // Note: tabs are wired up in a separate DOMContentLoaded above
 
     // FORM TOGGLE
     toggleFormBtn.addEventListener('click', () => {
