@@ -13,6 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
+
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -22,10 +25,24 @@
         <div class="blob blob-3"></div>
     </div>
 
-    <main class="app-container">
+    <main class="app-container" id="app-container" style="display:none">
         <header class="app-header">
-            <h1>Taskflow</h1>
-            <p>Manage your tasks effortlessly</p>
+            <div>
+                <h1>Taskflow</h1>
+                <p>Manage your tasks effortlessly</p>
+            </div>
+            <div class="user-info" id="user-info">
+                <span id="user-email" class="user-email-text"></span>
+                <button id="logout-btn" class="logout-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Logout
+                </button>
+            </div>
         </header>
 
         <div id="add-task-wrapper" class="add-task-wrapper">
@@ -158,6 +175,51 @@
 
     <!-- Notification Toast -->
     <div id="toast-container" class="toast-container"></div>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal-content glass-panel auth-modal-content">
+            <div class="auth-header">
+                <h1 class="auth-logo">Taskflow</h1>
+                <p class="auth-subtitle">Your personal task manager</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tab-login" data-tab="login">Sign In</button>
+                <button class="auth-tab" id="tab-signup" data-tab="signup">Create Account</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="you@example.com" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Your password" required
+                        autocomplete="current-password">
+                </div>
+                <p id="login-error" class="auth-error hidden"></p>
+                <button type="submit" class="primary-btn" id="login-submit-btn">Sign In</button>
+            </form>
+
+            <!-- Sign Up Form -->
+            <form id="signup-form" class="auth-form hidden">
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" placeholder="you@example.com" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="At least 6 characters" required
+                        autocomplete="new-password">
+                </div>
+                <p id="signup-error" class="auth-error hidden"></p>
+                <button type="submit" class="primary-btn" id="signup-submit-btn">Create Account</button>
+            </form>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
