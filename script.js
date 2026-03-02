@@ -123,12 +123,12 @@ async function handleLogin(e) {
     const password = loginPasswordInput.value;
     loginError.style.display = 'none';
     loginSubmitBtn.classList.add('btn-loading');
-    loginSubmitBtn.textContent = 'Logging in…';
+    loginSubmitBtn.textContent = 'Iniciando sesión...';
 
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
     loginSubmitBtn.classList.remove('btn-loading');
-    loginSubmitBtn.textContent = 'Log In';
+    loginSubmitBtn.textContent = 'Iniciar sesión';
 
     if (error) {
         loginError.textContent = error.message;
@@ -143,7 +143,7 @@ async function handleSignup(e) {
     const password = signupPasswordInput.value;
 
     if (!username) {
-        signupError.textContent = 'Please enter a username.';
+        signupError.textContent = 'Por favor, introduce un nombre de usuario.';
         signupError.style.background = '';
         signupError.style.color = '';
         signupError.style.display = 'block';
@@ -152,7 +152,7 @@ async function handleSignup(e) {
 
     signupError.style.display = 'none';
     signupSubmitBtn.classList.add('btn-loading');
-    signupSubmitBtn.textContent = 'Creating account…';
+    signupSubmitBtn.textContent = 'Creando cuenta...';
 
     const { data, error } = await supabaseClient.auth.signUp({
         email,
@@ -161,14 +161,14 @@ async function handleSignup(e) {
     });
 
     signupSubmitBtn.classList.remove('btn-loading');
-    signupSubmitBtn.textContent = 'Create Account';
+    signupSubmitBtn.textContent = 'Crear cuenta';
 
     if (error) {
         signupError.textContent = error.message;
         signupError.className = 'auth-error';
         signupError.style.display = 'block';
     } else {
-        signupError.textContent = '✓ Account created! Check your email to confirm, then log in.';
+        signupError.textContent = '✓ ¡Cuenta creada! Revisa tu correo para confirmar y luego inicia sesión.';
         signupError.className = 'auth-error success-msg';
         signupError.style.display = 'block';
         signupUsernameInput.value = '';
@@ -179,6 +179,7 @@ async function handleSignup(e) {
 
 async function handleLogout() {
     await supabaseClient.auth.signOut();
+    showAuthModal(); // Ensure UI reset immediately
 }
 
 // ============================================================
@@ -192,7 +193,7 @@ async function fetchTasks() {
         .order('created_at', { ascending: false });
 
     if (error) {
-        showToast('Error loading tasks: ' + error.message, 'error');
+        showToast('Error al cargar las tareas: ' + error.message, 'error');
         return;
     }
     tasks = data || [];
@@ -213,7 +214,7 @@ async function addTask(title, priority, description) {
     const { data, error } = await supabaseClient.from('tasks').insert([newTask]).select().single();
 
     if (error) {
-        showToast('Error adding task: ' + error.message, 'error');
+        showToast('Error al añadir la tarea: ' + error.message, 'error');
         return;
     }
 
@@ -226,7 +227,7 @@ async function addTask(title, priority, description) {
     taskFormSection.classList.add('hidden');
     addTaskWrapper.classList.remove('hidden');
 
-    showToast('Task added successfully', 'success');
+    showToast('Tarea añadida con éxito', 'success');
     renderTasks();
 }
 
@@ -244,15 +245,15 @@ async function toggleTaskStatus(id) {
         .eq('user_id', currentUser.id);
 
     if (error) {
-        showToast('Error updating task: ' + error.message, 'error');
+        showToast('Error al actualizar la tarea: ' + error.message, 'error');
         return;
     }
 
     tasks[taskIndex].status = newStatus;
     renderTasks();
 
-    const statusMsg = newStatus === 'completed' ? 'marked as completed' : 'marked as in progress';
-    showToast(`Task ${statusMsg}`, 'info');
+    const statusMsg = newStatus === 'completed' ? 'marcada como completada' : 'marcada como en progreso';
+    showToast(`Tarea ${statusMsg}`, 'info');
 }
 
 async function deleteTask(id) {
@@ -263,13 +264,13 @@ async function deleteTask(id) {
         .eq('user_id', currentUser.id);
 
     if (error) {
-        showToast('Error deleting task: ' + error.message, 'error');
+        showToast('Error al eliminar la tarea: ' + error.message, 'error');
         return;
     }
 
     tasks = tasks.filter(t => t.id !== id);
     renderTasks();
-    showToast('Task deleted', 'info');
+    showToast('Tarea eliminada', 'info');
 }
 
 // ============================================================
@@ -308,7 +309,7 @@ async function saveEditedTask() {
         .eq('user_id', currentUser.id);
 
     if (error) {
-        showToast('Error saving task: ' + error.message, 'error');
+        showToast('Error al guardar la tarea: ' + error.message, 'error');
         return;
     }
 
@@ -321,7 +322,7 @@ async function saveEditedTask() {
 
     renderTasks();
     closeEditModal();
-    showToast('Task updated successfully', 'success');
+    showToast('Tarea actualizada con éxito', 'success');
 }
 
 // ============================================================
@@ -410,11 +411,11 @@ function renderTasks() {
 
         const p = emptyState.querySelector('p');
         if (searchQuery) {
-            p.textContent = 'No tasks match your search.';
+            p.textContent = 'Ninguna tarea coincide con tu búsqueda.';
         } else if (currentFilter !== 'all') {
-            p.textContent = `No ${currentFilter.replace('-', ' ')} tasks found.`;
+            p.textContent = `No se encontraron tareas ${currentFilter === 'completed' ? 'completadas' : 'en progreso'}.`;
         } else {
-            p.textContent = 'No tasks found. Add a new task to get started!';
+            p.textContent = 'No se encontraron tareas. ¡Añade una nueva tarea para empezar!';
         }
         return;
     }
@@ -432,7 +433,7 @@ function renderTasks() {
         checkbox.type = 'checkbox';
         checkbox.className = 'task-checkbox';
         checkbox.checked = isCompleted;
-        checkbox.title = isCompleted ? 'Mark as in progress' : 'Mark as completed';
+        checkbox.title = isCompleted ? 'Marcar como en progreso' : 'Marcar como completada';
         checkbox.addEventListener('change', () => toggleTaskStatus(task.id));
 
         const content = document.createElement('div');
@@ -472,7 +473,7 @@ function renderTasks() {
 
         const badge = document.createElement('span');
         badge.className = `task-status-badge status-${task.status}`;
-        badge.textContent = isCompleted ? 'Completed' : 'In Progress';
+        badge.textContent = isCompleted ? 'Completada' : 'En progreso';
         titleArea.appendChild(badge);
 
         const actions = document.createElement('div');
@@ -481,15 +482,15 @@ function renderTasks() {
         const editBtn = document.createElement('button');
         editBtn.className = 'icon-btn edit';
         editBtn.innerHTML = Icons.edit;
-        editBtn.title = 'Edit task';
+        editBtn.title = 'Editar tarea';
         editBtn.addEventListener('click', () => openEditModal(task.id));
 
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'icon-btn delete';
         deleteBtn.innerHTML = Icons.delete;
-        deleteBtn.title = 'Delete task';
+        deleteBtn.title = 'Eliminar tarea';
         deleteBtn.addEventListener('click', () => {
-            if (confirm('Are you sure you want to delete this task?')) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
                 deleteTask(task.id);
             }
         });

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskflow - Beautiful Task Management</title>
-    <meta name="description" content="A smooth and modern task management application.">
+    <title>Taskflow - Gestión de Tareas Hermosa</title>
+    <meta name="description" content="Una aplicación de gestión de tareas fluida y moderna.">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,7 @@
         <header class="app-header">
             <div>
                 <h1>Taskflow</h1>
-                <p>Manage your tasks effortlessly</p>
+                <p>Gestiona tus tareas sin esfuerzo</p>
             </div>
             <div class="user-info" id="user-info">
                 <span id="user-email" class="user-email-text"></span>
@@ -40,7 +40,7 @@
                         <polyline points="16 17 21 12 16 7"></polyline>
                         <line x1="21" y1="12" x2="9" y2="12"></line>
                     </svg>
-                    Logout
+                    Cerrar sesión
                 </button>
             </div>
         </header>
@@ -52,13 +52,13 @@
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
-                Create New Task
+                Crear nueva tarea
             </button>
         </div>
 
         <section id="task-form-section" class="task-form-section glass-panel collapsible hidden">
             <div class="form-header">
-                <h2>Add New Task</h2>
+                <h2>Añadir nueva tarea</h2>
                 <button type="button" id="close-form-btn" class="icon-btn close-form">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -70,12 +70,12 @@
             <form id="task-form">
                 <div class="form-row">
                     <div class="form-group flex-1">
-                        <label for="task-title">Title <span class="required">*</span></label>
-                        <input type="text" id="task-title" placeholder="What needs to be done?" required
+                        <label for="task-title">Título <span class="required">*</span></label>
+                        <input type="text" id="task-title" placeholder="¿Qué hay que hacer?" required
                             autocomplete="off">
                     </div>
                     <div class="form-group">
-                        <label for="task-priority">Priority</label>
+                        <label for="task-priority">Prioridad</label>
                         <select id="task-priority" class="form-select">
                             <option value="baja">Baja prioridad</option>
                             <option value="alta">Alta prioridad</option>
@@ -83,8 +83,8 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="task-desc">Description (Optional)</label>
-                    <textarea id="task-desc" placeholder="Add some details..." rows="3"></textarea>
+                    <label for="task-desc">Descripción (Opcional)</label>
+                    <textarea id="task-desc" placeholder="Añade algunos detalles..." rows="3"></textarea>
                 </div>
                 <button type="submit" class="primary-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -92,7 +92,7 @@
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
-                    Add Task
+                    Añadir tarea
                 </button>
             </form>
         </section>
@@ -104,13 +104,13 @@
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" id="search-input" placeholder="Search tasks by title or description...">
+                <input type="text" id="search-input" placeholder="Buscar tareas por título o descripción...">
             </div>
 
             <div class="filter-controls">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="in-progress">In Progress</button>
-                <button class="filter-btn" data-filter="completed">Completed</button>
+                <button class="filter-btn active" data-filter="all">Todas</button>
+                <button class="filter-btn" data-filter="in-progress">En progreso</button>
+                <button class="filter-btn" data-filter="completed">Completadas</button>
             </div>
         </section>
 
@@ -124,7 +124,7 @@
                     <line x1="16" y1="17" x2="8" y2="17"></line>
                     <polyline points="10 9 9 9 8 9"></polyline>
                 </svg>
-                <p>No tasks found. Add a new task to get started!</p>
+                <p>No se encontraron tareas. ¡Añade una nueva tarea para empezar!</p>
             </div>
 
             <ul id="task-list" class="task-list">
@@ -137,7 +137,7 @@
     <div id="edit-modal" class="modal-overlay hidden">
         <div class="modal-content glass-panel">
             <div class="modal-header">
-                <h2>Edit Task</h2>
+                <h2>Editar tarea</h2>
                 <button id="close-modal" class="icon-btn" aria-label="Close modal">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -150,11 +150,11 @@
                 <input type="hidden" id="edit-task-id">
                 <div class="form-row">
                     <div class="form-group flex-1">
-                        <label for="edit-task-title">Title <span class="required">*</span></label>
+                        <label for="edit-task-title">Título <span class="required">*</span></label>
                         <input type="text" id="edit-task-title" required autocomplete="off">
                     </div>
                     <div class="form-group">
-                        <label for="edit-task-priority">Priority</label>
+                        <label for="edit-task-priority">Prioridad</label>
                         <select id="edit-task-priority" class="form-select">
                             <option value="baja">Baja prioridad</option>
                             <option value="alta">Alta prioridad</option>
@@ -162,12 +162,12 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="edit-task-desc">Description (Optional)</label>
+                    <label for="edit-task-desc">Descripción (Opcional)</label>
                     <textarea id="edit-task-desc" rows="3"></textarea>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" id="cancel-edit" class="secondary-btn">Cancel</button>
-                    <button type="submit" class="primary-btn">Save Changes</button>
+                    <button type="button" id="cancel-edit" class="secondary-btn">Cancelar</button>
+                    <button type="submit" class="primary-btn">Guardar cambios</button>
                 </div>
             </form>
         </div>
@@ -181,47 +181,47 @@
         <div class="auth-card">
             <div class="auth-header">
                 <h1 class="auth-logo">Taskflow</h1>
-                <p class="auth-subtitle">Your personal task manager</p>
+                <p class="auth-subtitle">Tu gestor de tareas personal</p>
             </div>
 
             <div class="auth-tabs">
-                <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Log In</button>
-                <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>
+                <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Iniciar sesión</button>
+                <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Registrarse</button>
             </div>
 
             <!-- Login Form -->
             <form id="login-form" class="auth-form">
                 <div class="form-group">
-                    <label for="login-email">Email</label>
-                    <input type="email" id="login-email" placeholder="you@example.com" required autocomplete="email">
+                    <label for="login-email">Correo electrónico</label>
+                    <input type="email" id="login-email" placeholder="tu@ejemplo.com" required autocomplete="email">
                 </div>
                 <div class="form-group">
-                    <label for="login-password">Password</label>
-                    <input type="password" id="login-password" placeholder="Your password" required
+                    <label for="login-password">Contraseña</label>
+                    <input type="password" id="login-password" placeholder="Tu contraseña" required
                         autocomplete="current-password">
                 </div>
                 <p id="login-error" class="auth-error" style="display:none"></p>
-                <button type="submit" class="primary-btn" id="login-submit-btn">Log In</button>
+                <button type="submit" class="primary-btn" id="login-submit-btn">Iniciar sesión</button>
             </form>
 
             <!-- Sign Up Form -->
             <form id="signup-form" class="auth-form" style="display:none">
                 <div class="form-group">
-                    <label for="signup-username">Username</label>
-                    <input type="text" id="signup-username" placeholder="Choose a username" required
+                    <label for="signup-username">Nombre de usuario</label>
+                    <input type="text" id="signup-username" placeholder="Elige un nombre de usuario" required
                         autocomplete="username">
                 </div>
                 <div class="form-group">
-                    <label for="signup-email">Email</label>
-                    <input type="email" id="signup-email" placeholder="you@example.com" required autocomplete="email">
+                    <label for="signup-email">Correo electrónico</label>
+                    <input type="email" id="signup-email" placeholder="tu@ejemplo.com" required autocomplete="email">
                 </div>
                 <div class="form-group">
-                    <label for="signup-password">Password</label>
-                    <input type="password" id="signup-password" placeholder="At least 6 characters" required
+                    <label for="signup-password">Contraseña</label>
+                    <input type="password" id="signup-password" placeholder="Al menos 6 caracteres" required
                         autocomplete="new-password">
                 </div>
                 <p id="signup-error" class="auth-error" style="display:none"></p>
-                <button type="submit" class="primary-btn" id="signup-submit-btn">Create Account</button>
+                <button type="submit" class="primary-btn" id="signup-submit-btn">Crear cuenta</button>
             </form>
         </div>
     </div>
