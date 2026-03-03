@@ -492,11 +492,10 @@ function renderTasks() {
             p.textContent = 'No se encontraron tareas. ¡Añade una nueva tarea para empezar!';
         }
     }
-    updateDashboard();
-    return;
+} else {
+    emptyState.classList.add('hidden');
 }
 
-emptyState.classList.add('hidden');
 taskList.innerHTML = '';
 
 filteredTasks.forEach(task => {
