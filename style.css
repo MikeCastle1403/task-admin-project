@@ -1,5 +1,5 @@
 :root {
-    /* Color Palette - Smooth Blue & Light Green App Theme */
+    /* Color Palette - Smooth Blue & Light Green App Theme (Default Light) */
     --clr-bg-gradient-start: #e0f2fe;
     /* Light blue */
     --clr-bg-gradient-end: #dcfce7;
@@ -28,6 +28,10 @@
     --clr-input-border: #cbd5e1;
     --clr-input-focus: var(--clr-primary);
 
+    --clr-blob-1: #93c5fd;
+    --clr-blob-2: #86efac;
+    --clr-blob-3: #fef08a;
+
     /* Layout */
     --radius-sm: 8px;
     --radius-md: 12px;
@@ -41,6 +45,96 @@
     /* Transitions */
     --transition-fast: 0.2s ease;
     --transition-normal: 0.3s ease;
+}
+
+[data-theme="dark"] {
+    --clr-bg-gradient-start: #0f172a;
+    /* Very dark blue */
+    --clr-bg-gradient-end: #1e293b;
+    /* Dark blue/gray */
+    --clr-primary: #60a5fa;
+    /* Lighter blue for better contrast */
+    --clr-primary-hover: #93c5fd;
+    --clr-success: #34d399;
+    --clr-success-bg: rgba(52, 211, 153, 0.1);
+
+    --clr-text-main: #f1f5f9;
+    /* Very light blue/gray */
+    --clr-text-muted: #94a3b8;
+    /* Muted blue/gray */
+
+    --clr-glass-bg: rgba(15, 23, 42, 0.8);
+    --clr-glass-border: rgba(255, 255, 255, 0.1);
+    --clr-glass-shadow: rgba(0, 0, 0, 0.3);
+
+    --clr-input-bg: rgba(30, 41, 59, 0.8);
+    --clr-input-border: #334155;
+
+    --clr-blob-1: #1e40af;
+    /* Deep blue */
+    --clr-blob-2: #064e3b;
+    /* Deep green */
+    --clr-blob-3: #701a75;
+    /* Deep purple */
+}
+
+/* Toggle Styles */
+.title-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.title-row.central {
+    justify-content: center;
+}
+
+.icon-btn.theme-toggle {
+    background: var(--clr-glass-bg);
+    border: 1px solid var(--clr-glass-border);
+    color: var(--clr-text-main);
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.icon-btn.theme-toggle:hover {
+    background: var(--clr-primary);
+    color: white;
+    transform: scale(1.05);
+}
+
+[data-theme="dark"] .sun-icon {
+    display: block;
+}
+
+[data-theme="dark"] .moon-icon {
+    display: none;
+}
+
+html:not([data-theme="dark"]) .sun-icon {
+    display: none;
+}
+
+html:not([data-theme="dark"]) .moon-icon {
+    display: block;
+}
+
+/* Refactor blobs to use variables */
+.blob-1 {
+    background: var(--clr-blob-1);
+}
+
+.blob-2 {
+    background: var(--clr-blob-2);
+}
+
+.blob-3 {
+    background: var(--clr-blob-3);
 }
 
 * {

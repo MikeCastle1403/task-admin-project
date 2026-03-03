@@ -59,6 +59,8 @@ const signupError = document.getElementById('signup-error');
 const signupSubmitBtn = document.getElementById('signup-submit-btn');
 const githubLoginBtn = document.getElementById('github-login');
 const googleLoginBtn = document.getElementById('google-login');
+const themeToggleApp = document.getElementById('theme-toggle-app');
+const themeToggleAuth = document.getElementById('theme-toggle-auth');
 const authTabs = document.querySelectorAll('.auth-tab');
 
 // ============================================================
@@ -84,6 +86,9 @@ const Icons = {
 // INIT
 // ============================================================
 async function init() {
+    // 0. Load theme
+    loadTheme();
+
     // 1. Cleanup malformed hashes from OAuth (e.g., ## to #)
     if (window.location.hash.startsWith('##')) {
         window.history.replaceState(null, null, window.location.pathname + window.location.hash.substring(1));
@@ -124,6 +129,25 @@ function showAuthModal() {
     authModal.style.display = 'flex';
     appContainer.style.display = 'none';
     taskList.innerHTML = '';
+}
+
+// ============================================================
+// THEME MANAGEMENT
+// ============================================================
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('taskflow-theme', theme);
+}
+
+function loadTheme() {
+    const savedTheme = localStorage.getItem('taskflow-theme') || 'light';
+    applyTheme(savedTheme);
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    applyTheme(newTheme);
 }
 
 // ============================================================
@@ -375,6 +399,10 @@ function setupEventListeners() {
 
     githubLoginBtn.addEventListener('click', () => handleSocialLogin('github'));
     googleLoginBtn.addEventListener('click', () => handleSocialLogin('google'));
+
+    // THEME TOGGLE
+    if (themeToggleApp) themeToggleApp.addEventListener('click', toggleTheme);
+    if (themeToggleAuth) themeToggleAuth.addEventListener('click', toggleTheme);
 
     // Note: tabs are wired up in a separate DOMContentLoaded above
 
