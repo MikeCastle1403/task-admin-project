@@ -76,6 +76,8 @@
     /* Deep green */
     --clr-blob-3: #701a75;
     /* Deep purple */
+    --clr-active-filter-text: #0f172a;
+    /* Dark text for active filter in dark mode */
 }
 
 /* Toggle Styles */
@@ -108,20 +110,13 @@
     transform: scale(1.05);
 }
 
-[data-theme="dark"] .sun-icon {
-    display: block;
+.theme-toggle {
+    gap: 0.5rem;
 }
 
-[data-theme="dark"] .moon-icon {
-    display: none;
-}
-
-html:not([data-theme="dark"]) .sun-icon {
-    display: none;
-}
-
-html:not([data-theme="dark"]) .moon-icon {
-    display: block;
+.theme-toggle .sun-icon,
+.theme-toggle .moon-icon {
+    display: block !important;
 }
 
 /* Refactor blobs to use variables */
@@ -540,6 +535,16 @@ select.form-select:focus {
     background: var(--clr-text-main);
     color: var(--clr-text-light);
     box-shadow: var(--shadow-sm);
+}
+
+[data-theme="dark"] .filter-btn.active {
+    background: var(--clr-primary);
+    color: var(--clr-active-filter-text);
+}
+
+[data-theme="dark"] .filter-btn.active {
+    background: var(--clr-primary);
+    color: var(--clr-active-filter-text);
 }
 
 /* Task List */
