@@ -491,96 +491,113 @@ function renderTasks() {
         } else {
             p.textContent = 'No se encontraron tareas. ¡Añade una nueva tarea para empezar!';
         }
-        return;
+    }
+    updateDashboard();
+    return;
+}
+
+emptyState.classList.add('hidden');
+taskList.innerHTML = '';
+
+filteredTasks.forEach(task => {
+    const isCompleted = task.status === 'completed';
+    const li = document.createElement('li');
+    li.className = `task-item ${isCompleted ? 'completed' : ''}`;
+    li.dataset.id = task.id;
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'task-checkbox';
+    checkbox.checked = isCompleted;
+    checkbox.title = isCompleted ? 'Marcar como en progreso' : 'Marcar como completada';
+    checkbox.addEventListener('change', () => toggleTaskStatus(task.id));
+
+    const content = document.createElement('div');
+    content.className = 'task-content';
+
+    const header = document.createElement('div');
+    header.className = 'task-header';
+
+    const titleArea = document.createElement('div');
+    titleArea.style.flex = '1';
+
+    const titleHeaderLine = document.createElement('div');
+    titleHeaderLine.style.display = 'flex';
+    titleHeaderLine.style.justifyContent = 'space-between';
+    titleHeaderLine.style.alignItems = 'flex-start';
+
+    const title = document.createElement('h3');
+    title.className = 'task-title';
+    title.textContent = task.title;
+    titleHeaderLine.appendChild(title);
+
+    if (task.priority) {
+        const priorityBadge = document.createElement('span');
+        priorityBadge.className = `priority-badge priority-${task.priority}`;
+        priorityBadge.textContent = task.priority === 'alta' ? 'Alta prioridad' : 'Baja prioridad';
+        titleHeaderLine.appendChild(priorityBadge);
     }
 
-    emptyState.classList.add('hidden');
-    taskList.innerHTML = '';
+    titleArea.appendChild(titleHeaderLine);
 
-    filteredTasks.forEach(task => {
-        const isCompleted = task.status === 'completed';
-        const li = document.createElement('li');
-        li.className = `task-item ${isCompleted ? 'completed' : ''}`;
-        li.dataset.id = task.id;
+    if (task.description) {
+        const desc = document.createElement('p');
+        desc.className = 'task-desc';
+        desc.textContent = task.description;
+        titleArea.appendChild(desc);
+    }
 
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'task-checkbox';
-        checkbox.checked = isCompleted;
-        checkbox.title = isCompleted ? 'Marcar como en progreso' : 'Marcar como completada';
-        checkbox.addEventListener('change', () => toggleTaskStatus(task.id));
+    const badge = document.createElement('span');
+    badge.className = `task-status-badge status-${task.status}`;
+    badge.textContent = isCompleted ? 'Completada' : 'En progreso';
+    titleArea.appendChild(badge);
 
-        const content = document.createElement('div');
-        content.className = 'task-content';
+    const actions = document.createElement('div');
+    actions.className = 'task-actions';
 
-        const header = document.createElement('div');
-        header.className = 'task-header';
+    const editBtn = document.createElement('button');
+    editBtn.className = 'icon-btn edit';
+    editBtn.innerHTML = Icons.edit;
+    editBtn.title = 'Editar tarea';
+    editBtn.addEventListener('click', () => openEditModal(task.id));
 
-        const titleArea = document.createElement('div');
-        titleArea.style.flex = '1';
-
-        const titleHeaderLine = document.createElement('div');
-        titleHeaderLine.style.display = 'flex';
-        titleHeaderLine.style.justifyContent = 'space-between';
-        titleHeaderLine.style.alignItems = 'flex-start';
-
-        const title = document.createElement('h3');
-        title.className = 'task-title';
-        title.textContent = task.title;
-        titleHeaderLine.appendChild(title);
-
-        if (task.priority) {
-            const priorityBadge = document.createElement('span');
-            priorityBadge.className = `priority-badge priority-${task.priority}`;
-            priorityBadge.textContent = task.priority === 'alta' ? 'Alta prioridad' : 'Baja prioridad';
-            titleHeaderLine.appendChild(priorityBadge);
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'icon-btn delete';
+    deleteBtn.innerHTML = Icons.delete;
+    deleteBtn.title = 'Eliminar tarea';
+    deleteBtn.addEventListener('click', () => {
+        if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
+            deleteTask(task.id);
         }
-
-        titleArea.appendChild(titleHeaderLine);
-
-        if (task.description) {
-            const desc = document.createElement('p');
-            desc.className = 'task-desc';
-            desc.textContent = task.description;
-            titleArea.appendChild(desc);
-        }
-
-        const badge = document.createElement('span');
-        badge.className = `task-status-badge status-${task.status}`;
-        badge.textContent = isCompleted ? 'Completada' : 'En progreso';
-        titleArea.appendChild(badge);
-
-        const actions = document.createElement('div');
-        actions.className = 'task-actions';
-
-        const editBtn = document.createElement('button');
-        editBtn.className = 'icon-btn edit';
-        editBtn.innerHTML = Icons.edit;
-        editBtn.title = 'Editar tarea';
-        editBtn.addEventListener('click', () => openEditModal(task.id));
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'icon-btn delete';
-        deleteBtn.innerHTML = Icons.delete;
-        deleteBtn.title = 'Eliminar tarea';
-        deleteBtn.addEventListener('click', () => {
-            if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
-                deleteTask(task.id);
-            }
-        });
-
-        actions.appendChild(editBtn);
-        actions.appendChild(deleteBtn);
-
-        header.appendChild(titleArea);
-        header.appendChild(actions);
-        content.appendChild(header);
-
-        li.appendChild(checkbox);
-        li.appendChild(content);
-
-        taskList.appendChild(li);
     });
+
+    actions.appendChild(editBtn);
+    actions.appendChild(deleteBtn);
+
+    header.appendChild(titleArea);
+    header.appendChild(actions);
+    content.appendChild(header);
+
+    li.appendChild(checkbox);
+    li.appendChild(content);
+
+    taskList.appendChild(li);
+});
+
+updateDashboard();
+}
+
+/**
+ * Updates the dashboard counts (Pending and Completed) based on the global tasks array.
+ */
+function updateDashboard() {
+    if (!pendingCountEl || !completedCountEl) return;
+
+    const pendingCount = tasks.filter(t => t.status !== 'completed').length;
+    const completedCount = tasks.filter(t => t.status === 'completed').length;
+
+    pendingCountEl.textContent = pendingCount;
+    completedCountEl.textContent = completedCount;
 }
 
 // ============================================================
