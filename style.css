@@ -140,6 +140,75 @@ html:not([data-theme="dark"]) .sun-icon {
     background: var(--clr-blob-3);
 }
 
+/* Dashboard Styles */
+.dashboard-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-card {
+    background: var(--clr-glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--clr-glass-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+.dash-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dash-icon.pending {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--clr-primary);
+}
+
+.dash-icon.completed {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--clr-success);
+}
+
+.dash-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.dash-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--clr-text-muted);
+}
+
+.dash-count {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--clr-text-main);
+}
+
+@media (max-width: 640px) {
+    .dashboard-section {
+        grid-template-columns: 1fr;
+    }
+}
+
 * {
     margin: 0;
     padding: 0;

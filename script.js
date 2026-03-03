@@ -34,6 +34,10 @@ const toastContainer = document.getElementById('toast-container');
 const userGreetingEl = document.getElementById('user-greeting');
 const logoutBtn = document.getElementById('logout-btn');
 
+// DOM — DASHBOARD
+const pendingCountEl = document.getElementById('pending-count');
+const completedCountEl = document.getElementById('completed-count');
+
 // DOM — EDIT MODAL
 const editModal = document.getElementById('edit-modal');
 const editForm = document.getElementById('edit-form');
