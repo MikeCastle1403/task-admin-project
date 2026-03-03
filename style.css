@@ -111,12 +111,20 @@
 }
 
 .theme-toggle {
-    gap: 0.5rem;
+    gap: 0;
 }
 
 .theme-toggle .sun-icon,
 .theme-toggle .moon-icon {
-    display: block !important;
+    display: none;
+}
+
+html:not([data-theme="dark"]) .sun-icon {
+    display: block;
+}
+
+[data-theme="dark"] .moon-icon {
+    display: block;
 }
 
 /* Refactor blobs to use variables */
