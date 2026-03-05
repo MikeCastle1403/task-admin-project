@@ -161,14 +161,16 @@ async function handleLogin(e) {
     loginSubmitBtn.classList.add('btn-loading');
     loginSubmitBtn.textContent = 'Iniciando sesión...';
 
-    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    try {
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-    loginSubmitBtn.classList.remove('btn-loading');
-    loginSubmitBtn.textContent = 'Iniciar sesión';
-
-    if (error) {
-        loginError.textContent = error.message;
-        loginError.style.display = 'block';
+        if (error) {
+            loginError.textContent = error.message;
+            loginError.style.display = 'block';
+        }
+    } finally {
+        loginSubmitBtn.classList.remove('btn-loading');
+        loginSubmitBtn.textContent = 'Iniciar sesión';
     }
 }
 
@@ -190,26 +192,28 @@ async function handleSignup(e) {
     signupSubmitBtn.classList.add('btn-loading');
     signupSubmitBtn.textContent = 'Creando cuenta...';
 
-    const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: { data: { username } }   // store username in user_metadata
-    });
+    try {
+        const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: { data: { username } }   // store username in user_metadata
+        });
 
-    signupSubmitBtn.classList.remove('btn-loading');
-    signupSubmitBtn.textContent = 'Crear cuenta';
-
-    if (error) {
-        signupError.textContent = error.message;
-        signupError.className = 'auth-error';
-        signupError.style.display = 'block';
-    } else {
-        signupError.textContent = '✓ ¡Cuenta creada! Revisa tu correo para confirmar y luego inicia sesión.';
-        signupError.className = 'auth-error success-msg';
-        signupError.style.display = 'block';
-        signupUsernameInput.value = '';
-        signupEmailInput.value = '';
-        signupPasswordInput.value = '';
+        if (error) {
+            signupError.textContent = error.message;
+            signupError.className = 'auth-error';
+            signupError.style.display = 'block';
+        } else {
+            signupError.textContent = '✓ ¡Cuenta creada! Revisa tu correo para confirmar y luego inicia sesión.';
+            signupError.className = 'auth-error success-msg';
+            signupError.style.display = 'block';
+            signupUsernameInput.value = '';
+            signupEmailInput.value = '';
+            signupPasswordInput.value = '';
+        }
+    } finally {
+        signupSubmitBtn.classList.remove('btn-loading');
+        signupSubmitBtn.textContent = 'Crear cuenta';
     }
 }
 
@@ -274,24 +278,31 @@ async function addTask(title, priority, description) {
         user_id: currentUser.id
     };
 
-    const { data, error } = await supabaseClient.from('tasks').insert([newTask]).select().single();
+    const submitBtn = taskForm.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.classList.add('btn-loading');
 
-    if (error) {
-        showToast('Error al añadir la tarea: ' + error.message, 'error');
-        return;
+    try {
+        const { data, error } = await supabaseClient.from('tasks').insert([newTask]).select().single();
+
+        if (error) {
+            showToast('Error al añadir la tarea: ' + error.message, 'error');
+            return;
+        }
+
+        tasks.unshift(data);
+
+        // Reset form and hide it
+        titleInput.value = '';
+        priorityInput.value = 'baja';
+        descInput.value = '';
+        taskFormSection.classList.add('hidden');
+        addTaskWrapper.classList.remove('hidden');
+
+        showToast('Tarea añadida con éxito', 'success');
+        renderTasks();
+    } finally {
+        if (submitBtn) submitBtn.classList.remove('btn-loading');
     }
-
-    tasks.unshift(data);
-
-    // Reset form and hide it
-    titleInput.value = '';
-    priorityInput.value = 'baja';
-    descInput.value = '';
-    taskFormSection.classList.add('hidden');
-    addTaskWrapper.classList.remove('hidden');
-
-    showToast('Tarea añadida con éxito', 'success');
-    renderTasks();
 }
 
 async function toggleTaskStatus(id) {
@@ -301,6 +312,10 @@ async function toggleTaskStatus(id) {
     const currentStatus = tasks[taskIndex].status;
     const newStatus = currentStatus === 'completed' ? 'in-progress' : 'completed';
 
+    // Optimistic UI Update
+    tasks[taskIndex].status = newStatus;
+    renderTasks();
+
     const { error } = await supabaseClient
         .from('tasks')
         .update({ status: newStatus })
@@ -308,18 +323,24 @@ async function toggleTaskStatus(id) {
         .eq('user_id', currentUser.id);
 
     if (error) {
+        // Revert on error
+        tasks[taskIndex].status = currentStatus;
+        renderTasks();
         showToast('Error al actualizar la tarea: ' + error.message, 'error');
         return;
     }
-
-    tasks[taskIndex].status = newStatus;
-    renderTasks();
 
     const statusMsg = newStatus === 'completed' ? 'marcada como completada' : 'marcada como en progreso';
     showToast(`Tarea ${statusMsg}`, 'info');
 }
 
 async function deleteTask(id) {
+    const originalTasks = [...tasks];
+
+    // Optimistic UI Update
+    tasks = tasks.filter(t => t.id !== id);
+    renderTasks();
+
     const { error } = await supabaseClient
         .from('tasks')
         .delete()
@@ -327,12 +348,13 @@ async function deleteTask(id) {
         .eq('user_id', currentUser.id);
 
     if (error) {
+        // Revert
+        tasks = originalTasks;
+        renderTasks();
         showToast('Error al eliminar la tarea: ' + error.message, 'error');
         return;
     }
 
-    tasks = tasks.filter(t => t.id !== id);
-    renderTasks();
     showToast('Tarea eliminada', 'info');
 }
 
@@ -365,27 +387,34 @@ async function saveEditedTask() {
 
     if (!newTitle) return;
 
-    const { error } = await supabaseClient
-        .from('tasks')
-        .update({ title: newTitle, priority: newPriority, description: newDesc })
-        .eq('id', id)
-        .eq('user_id', currentUser.id);
+    const submitBtn = editForm.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.classList.add('btn-loading');
 
-    if (error) {
-        showToast('Error al guardar la tarea: ' + error.message, 'error');
-        return;
+    try {
+        const { error } = await supabaseClient
+            .from('tasks')
+            .update({ title: newTitle, priority: newPriority, description: newDesc })
+            .eq('id', id)
+            .eq('user_id', currentUser.id);
+
+        if (error) {
+            showToast('Error al guardar la tarea: ' + error.message, 'error');
+            return;
+        }
+
+        const taskIndex = tasks.findIndex(t => t.id === id);
+        if (taskIndex !== -1) {
+            tasks[taskIndex].title = newTitle;
+            tasks[taskIndex].priority = newPriority;
+            tasks[taskIndex].description = newDesc;
+        }
+
+        renderTasks();
+        closeEditModal();
+        showToast('Tarea actualizada con éxito', 'success');
+    } finally {
+        if (submitBtn) submitBtn.classList.remove('btn-loading');
     }
-
-    const taskIndex = tasks.findIndex(t => t.id === id);
-    if (taskIndex !== -1) {
-        tasks[taskIndex].title = newTitle;
-        tasks[taskIndex].priority = newPriority;
-        tasks[taskIndex].description = newDesc;
-    }
-
-    renderTasks();
-    closeEditModal();
-    showToast('Tarea actualizada con éxito', 'success');
 }
 
 // ============================================================
