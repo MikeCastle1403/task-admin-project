@@ -96,13 +96,33 @@ async function init() {
 
     setupEventListeners();
 
-    // Listen to auth state changes (login, logout, page load)
-    supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    // 2. Check initial session to avoid race condition and missing load
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session && session.user) {
+        currentUser = session.user;
+        showApp();
+        fetchTasks(); // Non-blocking
+    } else {
+        showAuthModal();
+    }
+
+    // 3. Listen to auth state changes and DO NOT block the event loop with awaits
+    supabaseClient.auth.onAuthStateChange((event, session) => {
         if (session && session.user) {
+            const isNewUser = !currentUser || currentUser.id !== session.user.id;
             currentUser = session.user;
             showApp();
-            await fetchTasks();
-        } else {
+
+            // Prevent token reload bugs by cleaning URL hash after successful sign in
+            if (event === 'SIGNED_IN' && window.location.hash.includes('access_token')) {
+                window.history.replaceState(null, null, window.location.pathname);
+            }
+
+            // Only fetch tasks for a newly authenticated session, not every token refresh
+            if (isNewUser || event === 'SIGNED_IN') {
+                fetchTasks();
+            }
+        } else if (event === 'SIGNED_OUT') {
             currentUser = null;
             tasks = [];
             showAuthModal();
