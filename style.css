@@ -1022,48 +1022,210 @@ select.form-select:focus {
     }
 }
 
-/* Responsive */
+/* ==================== Responsive ==================== */
+
+/* Tablet (≤ 768px) */
+@media (max-width: 768px) {
+    .app-container {
+        padding: 1.25rem 1rem;
+        gap: 1rem;
+    }
+
+    .app-layout {
+        flex-direction: column;
+    }
+
+    /* Dashboard goes ABOVE the task list on tablet */
+    .dashboard-sidebar {
+        width: 100%;
+        position: static;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    /* Each stat box stretches to fill the row evenly */
+    .stat-box {
+        flex: 1 1 calc(50% - 0.25rem);
+        min-width: 120px;
+    }
+
+    .dashboard-sidebar h3 {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .app-header h1 {
+        font-size: 1.75rem;
+    }
+}
+
+/* Mobile (≤ 640px) */
 @media (max-width: 640px) {
+    .app-container {
+        padding: 1rem 0.75rem;
+        gap: 0.875rem;
+    }
+
+    /* Header: stack vertically */
+    .app-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .app-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .user-info {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .user-email-text {
+        max-width: 160px;
+    }
+
+    /* Layout */
+    .app-layout {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .main-content {
+        gap: 0.75rem;
+    }
+
+    /* Controls: stack search + filters */
     .task-controls-section {
         flex-direction: column;
         align-items: stretch;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+
+    .search-bar {
+        min-width: unset;
+        width: 100%;
     }
 
     .filter-controls {
         justify-content: center;
+        width: 100%;
     }
 
+    .filter-btn {
+        flex: 1;
+        text-align: center;
+        padding: 0.45rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    /* Dashboard: 2-per-row grid on mobile */
+    .dashboard-sidebar {
+        width: 100%;
+        position: static;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        padding: 0.875rem;
+    }
+
+    /* Title spans both columns */
+    .dashboard-sidebar h3 {
+        grid-column: 1 / -1;
+        font-size: 0.95rem;
+        margin-bottom: 0;
+    }
+
+    .stat-box {
+        padding: 0.5rem 0.625rem;
+    }
+
+    /* Task items */
     .task-item {
-        padding: 1rem;
+        padding: 0.875rem 1rem;
+        gap: 0.75rem;
     }
 
     .task-actions {
         opacity: 1;
-        /* Always show actions on mobile */
+        /* always visible on mobile */
+        gap: 0.25rem;
     }
 
+    .task-title {
+        font-size: 0.95rem;
+    }
+
+    /* Form inside modals */
     .form-row {
         flex-direction: column;
         gap: 0;
     }
 
-    .app-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-    }
-
-    .user-info {
-        justify-content: center;
-    }
-
-    .app-layout {
-        flex-direction: column-reverse;
-    }
-
-    .dashboard-sidebar {
+    select.form-select {
+        min-width: unset;
         width: 100%;
-        position: static;
+    }
+
+    /* Modals */
+    .modal-content {
+        padding: 1.25rem;
+        width: calc(100% - 1.5rem);
+        max-width: 100%;
+        border-radius: var(--radius-md);
+    }
+
+    .modal-header h2 {
+        font-size: 1.1rem;
+    }
+
+    /* Add task button */
+    .toggle-add-btn {
+        padding: 0.65rem 1.5rem;
+        font-size: 0.95rem;
+    }
+
+    /* Glass panel smaller padding on mobile */
+    .glass-panel {
+        padding: 1rem;
+    }
+
+    /* Toast: go full-width at bottom on mobile */
+    .toast-container {
+        right: 0.75rem;
+        left: 0.75rem;
+        bottom: 1rem;
+    }
+
+    .toast {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Auth overlay */
+    .auth-overlay {
+        padding: 0.75rem;
+        align-items: flex-end;
+    }
+
+    .auth-card {
+        border-radius: var(--radius-md);
+        padding: 1.25rem;
+        max-height: 92vh;
+        overflow-y: auto;
+    }
+
+    .auth-title {
+        font-size: 1.5rem;
+    }
+
+    .social-buttons {
+        gap: 0.5rem;
     }
 }
 
