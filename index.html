@@ -80,11 +80,61 @@
                     </button>
                 </div>
 
-        <section id="task-form-section" class="task-form-section glass-panel collapsible hidden">
-            <div class="form-header">
+                <section class="task-controls-section glass-panel">
+                    <div class="search-bar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="search-input" placeholder="Buscar tareas por título o descripción...">
+                    </div>
+
+                    <div class="filter-controls">
+                        <button class="filter-btn active" data-filter="all">Todas</button>
+                        <button class="filter-btn" data-filter="in-progress">En progreso</button>
+                        <button class="filter-btn" data-filter="completed">Completadas</button>
+                    </div>
+                </section>
+
+                <section class="task-list-section">
+                    <div id="empty-state" class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <p>No se encontraron tareas. ¡Añade una nueva tarea para empezar!</p>
+                    </div>
+
+                    <ul id="task-list" class="task-list">
+                    </ul>
+                </section>
+            </div> <!-- end main content -->
+            <aside class="dashboard-sidebar glass-panel">
+                <h3>Resumen</h3>
+                <div class="stat-box">
+                    <span class="stat-label">Tareas completadas</span>
+                    <span id="stat-completed" class="stat-number">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Tareas en progreso</span>
+                    <span id="stat-progress" class="stat-number">0</span>
+                </div>
+            </aside>
+        </div> <!-- end app layout -->
+    </main>
+
+    <!-- Add Task Modal -->
+    <div id="add-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
                 <h2>Añadir nueva tarea</h2>
-                <button type="button" id="close-form-btn" class="icon-btn close-form">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                <button id="close-form-btn" class="icon-btn" aria-label="Close modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -110,64 +160,19 @@
                     <label for="task-desc">Descripción (Opcional)</label>
                     <textarea id="task-desc" placeholder="Añade algunos detalles..." rows="3"></textarea>
                 </div>
-                <button type="submit" class="primary-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    Añadir tarea
-                </button>
+                <div class="modal-actions">
+                    <button type="submit" class="primary-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Añadir tarea
+                    </button>
+                </div>
             </form>
-        </section>
-
-        <section class="task-controls-section glass-panel">
-            <div class="search-bar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input type="text" id="search-input" placeholder="Buscar tareas por título o descripción...">
-            </div>
-
-            <div class="filter-controls">
-                <button class="filter-btn active" data-filter="all">Todas</button>
-                <button class="filter-btn" data-filter="in-progress">En progreso</button>
-                <button class="filter-btn" data-filter="completed">Completadas</button>
-            </div>
-        </section>
-
-        <section class="task-list-section">
-            <div id="empty-state" class="empty-state">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-                <p>No se encontraron tareas. ¡Añade una nueva tarea para empezar!</p>
-            </div>
-
-            <ul id="task-list" class="task-list">
-            </ul>
-        </section>
-        </div> <!-- end main content -->
-        <aside class="dashboard-sidebar glass-panel">
-            <h3>Resumen</h3>
-            <div class="stat-box">
-                <span class="stat-label">Tareas completadas</span>
-                <span id="stat-completed" class="stat-number">0</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-label">Tareas en progreso</span>
-                <span id="stat-progress" class="stat-number">0</span>
-            </div>
-        </aside>
-        </div> <!-- end app layout -->
-    </main>
+        </div>
+    </div>
 
     <!-- Edit Task Modal -->
     <div id="edit-modal" class="modal-overlay hidden">

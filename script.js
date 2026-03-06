@@ -29,7 +29,7 @@ const filterBtns = document.querySelectorAll('.filter-btn');
 const addTaskWrapper = document.getElementById('add-task-wrapper');
 const toggleFormBtn = document.getElementById('toggle-form-btn');
 const closeFormBtn = document.getElementById('close-form-btn');
-const taskFormSection = document.getElementById('task-form-section');
+const addModal = document.getElementById('add-modal');
 const toastContainer = document.getElementById('toast-container');
 const userGreetingEl = document.getElementById('user-greeting');
 const logoutBtn = document.getElementById('logout-btn');
@@ -315,12 +315,11 @@ async function addTask(title, priority, description) {
 
         tasks.unshift(data);
 
-        // Reset form and hide it
+        // Reset form and hide modal
         titleInput.value = '';
         priorityInput.value = 'baja';
         descInput.value = '';
-        taskFormSection.classList.add('hidden');
-        addTaskWrapper.classList.remove('hidden');
+        addModal.classList.add('hidden');
 
         showToast('Tarea añadida con éxito', 'success');
         renderTasks();
@@ -459,16 +458,21 @@ function setupEventListeners() {
 
     // Note: tabs are wired up in a separate DOMContentLoaded above
 
-    // FORM TOGGLE
+    // FORM TOGGLE / ADD MODAL
     toggleFormBtn.addEventListener('click', () => {
-        taskFormSection.classList.remove('hidden');
-        addTaskWrapper.classList.add('hidden');
+        addModal.classList.remove('hidden');
         titleInput.focus();
     });
 
     closeFormBtn.addEventListener('click', () => {
-        taskFormSection.classList.add('hidden');
-        addTaskWrapper.classList.remove('hidden');
+        addModal.classList.add('hidden');
+    });
+
+    // Close ADD MODAL safely on click outside
+    addModal.addEventListener('click', (e) => {
+        if (e.target === addModal) {
+            addModal.classList.add('hidden');
+        }
     });
 
     // ADD TASK
@@ -502,7 +506,10 @@ function setupEventListeners() {
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !editModal.classList.contains('hidden')) closeEditModal();
+        if (e.key === 'Escape') {
+            if (!editModal.classList.contains('hidden')) closeEditModal();
+            if (!addModal.classList.contains('hidden')) addModal.classList.add('hidden');
+        }
     });
 
     editForm.addEventListener('submit', (e) => {
