@@ -63,6 +63,10 @@ const themeToggleApp = document.getElementById('theme-toggle-app');
 const themeToggleAuth = document.getElementById('theme-toggle-auth');
 const authTabs = document.querySelectorAll('.auth-tab');
 
+// DOM — DASHBOARD
+const statCompleted = document.getElementById('stat-completed');
+const statProgress = document.getElementById('stat-progress');
+
 // ============================================================
 // AUTH TABS — global function, called directly from onclick
 // attributes in HTML so switching always works instantly.
@@ -511,6 +515,8 @@ function setupEventListeners() {
 // RENDER
 // ============================================================
 function renderTasks() {
+    updateDashboardStats();
+
     let filteredTasks = tasks.filter(task => {
         if (currentFilter === 'in-progress' && task.status !== 'in-progress') return false;
         if (currentFilter === 'completed' && task.status !== 'completed') return false;
@@ -626,6 +632,21 @@ function renderTasks() {
 
         taskList.appendChild(li);
     });
+}
+
+function updateDashboardStats() {
+    if (!statCompleted || !statProgress) return;
+
+    let completedCount = 0;
+    let progressCount = 0;
+
+    tasks.forEach(task => {
+        if (task.status === 'completed') completedCount++;
+        else progressCount++;
+    });
+
+    statCompleted.textContent = completedCount;
+    statProgress.textContent = progressCount;
 }
 
 // ============================================================
