@@ -1037,6 +1037,7 @@ select.form-select:focus {
 
     /* Dashboard goes ABOVE the task list on tablet */
     .dashboard-sidebar {
+        order: -1;
         width: 100%;
         position: static;
         flex-direction: row;
@@ -1126,6 +1127,7 @@ select.form-select:focus {
 
     /* Dashboard: 2-per-row grid on mobile */
     .dashboard-sidebar {
+        order: -1;
         width: 100%;
         position: static;
         display: grid;
