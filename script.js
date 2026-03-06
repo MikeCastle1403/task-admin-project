@@ -66,6 +66,8 @@ const authTabs = document.querySelectorAll('.auth-tab');
 // DOM — DASHBOARD
 const statCompleted = document.getElementById('stat-completed');
 const statProgress = document.getElementById('stat-progress');
+const statHigh = document.getElementById('stat-high');
+const statLow = document.getElementById('stat-low');
 
 // ============================================================
 // AUTH TABS — global function, called directly from onclick
@@ -642,18 +644,25 @@ function renderTasks() {
 }
 
 function updateDashboardStats() {
-    if (!statCompleted || !statProgress) return;
+    if (!statCompleted || !statProgress || !statHigh || !statLow) return;
 
     let completedCount = 0;
     let progressCount = 0;
+    let highCount = 0;
+    let lowCount = 0;
 
     tasks.forEach(task => {
         if (task.status === 'completed') completedCount++;
         else progressCount++;
+
+        if (task.priority === 'alta') highCount++;
+        else if (task.priority === 'baja') lowCount++;
     });
 
     statCompleted.textContent = completedCount;
     statProgress.textContent = progressCount;
+    statHigh.textContent = highCount;
+    statLow.textContent = lowCount;
 }
 
 // ============================================================
